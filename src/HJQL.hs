@@ -18,15 +18,15 @@ deletePairs :: [String] -> JSON -> JSON
 deletePairs query doc = undefined
 
 -- | Query a JSON object and return the requested data
-queryObj :: [String] -> JSON -> Maybe JSON
-queryObj query doc = undefined
+readPairs :: [String] -> JSON -> Maybe JSON
+readPairs query doc = undefined
 
 -- | Update a JSON object and return the modified data, but only if the keys
 -- already exist
-updateObj :: JSON -> JSON -> Maybe JSON
-updateObj query doc = undefined
+updatePairs :: JSON -> JSON -> Maybe JSON
+updatePairs query doc = undefined
 
 -- | Update a JSON object and return the modified data regardless of whether
 -- the keys exist
-addPairs :: JSON -> JSON -> JSON
-addPairs query doc = undefined
+createPairs :: JSON -> JSON -> JSON
+createPairs query doc = undefined
