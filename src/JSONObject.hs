@@ -9,6 +9,7 @@ data JSON
   | JSONBool Bool
   | JSONNull
   | JSONList [JSON]
+  deriving (Eq)
 
 instance Show JSON where
   show :: JSON -> String
