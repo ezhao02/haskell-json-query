@@ -1,7 +1,19 @@
 module HJQL where
 
-import HJQLParser
+import Data.Map (Map)
+import Data.Map qualified as M
 import JSONObject (JSON)
+
+type Key = String
+
+data Query
+  = Write (QueryPath JSON)
+  | Read (QueryPath ())
+  | Delete (QueryPath ())
+
+data QueryPath a
+  = QueryLeaf a
+  | QueryBranch (Map Key (QueryPath a))
 
 {-
 Four possible types of queries (CRUD):
