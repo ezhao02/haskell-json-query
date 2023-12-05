@@ -11,11 +11,11 @@ data JSON
   | JSONBool Bool
   | JSONNull
   | JSONList [JSON]
-  deriving (Eq)
+  deriving (Eq, Show)
 
-instance Show JSON where
-  show :: JSON -> String
-  show j = undefined
+-- instance Show JSON where
+--   show :: JSON -> String
+--   show j = undefined
 
 class ConvertJSON a where
   toJSON :: a -> JSON
