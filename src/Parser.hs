@@ -27,6 +27,7 @@ module Parser
     between,
     sepBy1,
     sepBy,
+    sepByHanging,
     braces,
     brackets,
     wsP,
@@ -198,3 +199,10 @@ brackets x = between (char '[') x (char ']')
 -- | Ignores leading and trailing whitespace
 wsP :: Parser a -> Parser a
 wsP p = many space *> p <* many space
+
+-- | Like Parser.sepBy, but allows up to one hanging sep at the end
+sepByHanging :: forall a sep. Parser a -> Parser sep -> Parser [a]
+sepByHanging p sep = noHangingSepP <* sep <|> noHangingSepP
+  where
+    noHangingSepP :: Parser [a]
+    noHangingSepP = sepBy p sep

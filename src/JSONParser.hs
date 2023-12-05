@@ -56,7 +56,7 @@ nullP = P.string "null"
 
 -- | Parser for getting a mapping from String to JSON
 objP :: Parser JSONObj
-objP = Map.fromList <$> P.braces (sepByWHangingSep kvPairP $ P.char ',')
+objP = Map.fromList <$> P.braces (P.sepByHanging kvPairP $ P.char ',')
 
 -- | Parser for getting a key value pair
 kvPairP :: Parser (String, JSON)
@@ -64,11 +64,4 @@ kvPairP = (,) <$> P.wsP strP <* P.char ':' <*> jsonP
 
 -- | Parser for getting a list of JSON
 listP :: Parser [JSON]
-listP = P.brackets $ sepByWHangingSep jsonP $ P.char ','
-
--- | Like Parser.sepBy, but allows up to one hanging sep at the end
-sepByWHangingSep :: forall a sep. Parser a -> Parser sep -> Parser [a]
-sepByWHangingSep p sep = noHangingSepP <* sep <|> noHangingSepP
-  where
-    noHangingSepP :: Parser [a]
-    noHangingSepP = P.sepBy p sep
+listP = P.brackets $ P.sepByHanging jsonP $ P.char ','
