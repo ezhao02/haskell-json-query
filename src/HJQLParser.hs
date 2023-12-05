@@ -9,7 +9,6 @@ import JSONParser qualified as JP
 import Parser (Parser)
 import Parser qualified as P
 
--- | Key: 0 -> skip, 1 -> create, 2 -> read, 3 -> update, 4 -> delete
 type Instruction = (Int, Either JSON [String])
 
 -- | Parse a HJQL file

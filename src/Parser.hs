@@ -29,6 +29,7 @@ module Parser
     sepBy,
     braces,
     brackets,
+    wsP,
   )
 where
 
@@ -194,8 +195,6 @@ braces x = between (char '{') x (char '}')
 brackets :: Parser a -> Parser a
 brackets x = between (char '[') x (char ']')
 
+-- | Ignores leading and trailing whitespace
 wsP :: Parser a -> Parser a
-wsP p = p <* many space
-
-colonP :: Parser Char
-colonP = wsP $ char ':'
+wsP p = many space *> p <* many space

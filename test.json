@@ -1,0 +1,15 @@
+{
+    "name": "Bob",
+    "dob": "04-21-1976",
+    "number_of_children": 2,
+    "children": [
+        "Alice",
+        "Foo"
+    ],
+    "retired": false,
+    "job": {
+        "company_name": "Monster Inc.",
+        "loc": "Monstropolis"
+    },
+    "tails": null
+}

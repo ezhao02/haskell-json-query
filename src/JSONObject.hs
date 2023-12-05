@@ -2,10 +2,12 @@ module JSONObject where
 
 import Data.Map (Map)
 
+type JSONObj = Map String JSON
+
 data JSON
   = JSONNum Float
   | JSONStr String
-  | JSONObj (Map String JSON)
+  | JSONObj JSONObj
   | JSONBool Bool
   | JSONNull
   | JSONList [JSON]
