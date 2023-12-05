@@ -35,14 +35,16 @@ jsonP =
 -- Parser for getting a floating point value for JSONNum
 numP :: Parser Float
 numP =
-  read
-    <$> ( ((++) <$> some P.digit <*> ((:) <$> P.char '.' <*> some P.digit))
+  let nonNegFloatParser =
+        ( ((++) <$> some P.digit <*> ((:) <$> P.char '.' <*> some P.digit))
             <|> some P.digit
         )
+   in read
+        <$> (((:) <$> P.char '-' <*> nonNegFloatParser) <|> nonNegFloatParser)
 
 -- Parser for getting a string value for JSONStr
 strP :: Parser String
-strP = P.between (P.char '"') (many P.get) (P.char '"')
+strP = P.between (P.char '"') (many (P.filter ('"' /=) P.get)) (P.char '"')
 
 -- Parser for getting a boolean value for JSONBool
 boolP :: Parser Bool
@@ -54,7 +56,7 @@ nullP = P.string "null"
 
 -- | Parser for getting a mapping from String to JSON
 objP :: Parser JSONObj
-objP = Map.fromList <$> P.braces (P.sepBy kvPairP $ P.char ',')
+objP = Map.fromList <$> P.braces (sepByWHangingSep kvPairP $ P.char ',')
 
 -- | Parser for getting a key value pair
 kvPairP :: Parser (String, JSON)
@@ -62,4 +64,11 @@ kvPairP = (,) <$> P.wsP strP <* P.char ':' <*> jsonP
 
 -- | Parser for getting a list of JSON
 listP :: Parser [JSON]
-listP = P.brackets (P.sepBy jsonP (P.char ','))
+listP = P.brackets $ sepByWHangingSep jsonP $ P.char ','
+
+-- | Like Parser.sepBy, but allows up to one hanging sep at the end
+sepByWHangingSep :: forall a sep. Parser a -> Parser sep -> Parser [a]
+sepByWHangingSep p sep = noHangingSepP <* sep <|> noHangingSepP
+  where
+    noHangingSepP :: Parser [a]
+    noHangingSepP = P.sepBy p sep
