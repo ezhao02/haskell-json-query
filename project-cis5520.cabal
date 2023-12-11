@@ -47,6 +47,7 @@ library
       Parser
       JSONParser
       JSONObject
+      ConvertJSON
   hs-source-dirs:
       src
 

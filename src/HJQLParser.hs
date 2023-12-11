@@ -11,8 +11,8 @@ import Parser (Parser)
 import Parser qualified as P
 
 -- | Parse a HJQL file
-parserHJQLFile :: String -> IO (Either String [Query])
-parserHJQLFile = P.parseFromFile hjqlListP
+parseHJQLFile :: String -> IO (Either String [Query])
+parseHJQLFile = P.parseFromFile hjqlListP
 
 -- | Parses a list of instructions
 hjqlListP :: Parser [Query]

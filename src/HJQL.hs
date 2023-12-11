@@ -108,33 +108,6 @@ runQuery (Delete queryTree) doc =
       Nothing -> Left $ "Key " ++ key ++ " not found"
       Just _ -> Right $ M.delete key doc
 
-showJSON :: Int -> JSON -> String
-showJSON x (JSONNum n) = show n
-showJSON x (JSONStr s) = show s
-showJSON x (JSONObj obj) = showJSONObject x obj
-showJSON x (JSONBool b) = if b then "true" else "false"
-showJSON x JSONNull = "null"
-showJSON x (JSONList list) = "[" ++ intercalate ", " (map (showJSON x) list) ++ "]"
-
-showJSONObject :: Int -> JSONObj -> String
-showJSONObject indent obj =
-  "{\n"
-    ++ removeTrailingComma (unlines (map showPair (M.toList obj)))
-    ++ replicate indent ' '
-    ++ "}"
-  where
-    showPair (key, value) =
-      replicate (indent + 4) ' ' ++ show key ++ ": " ++ showJSON (indent + 4) value ++ ","
-
--- Remove trailing commas from the last pair in the JSON object
-removeTrailingComma :: String -> String
-removeTrailingComma str =
-  case reverse str of
-    '}' : '\n' : ',' : rest -> reverse ('}' : '\n' : rest)
-    '}' : ',' : rest -> reverse ('}' : rest)
-    '\n' : ',' : rest -> reverse ('\n' : rest)
-    _ -> str
-
 -- Example usage:
 exampleJSONObj :: JSONObj
 exampleJSONObj =
