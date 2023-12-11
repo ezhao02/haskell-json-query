@@ -7,50 +7,141 @@ import JSONObject
 import Parser qualified as P
 import Test.HUnit (Assertion, Counts, Test (..), assert, runTestTT, (~:), (~?=))
 
-test_parseCreate :: Test
-test_parseCreate =
-  TestList
-    [ P.parse parseCreate "create {\"key\": \"string\"}" ~?= Right (JSONObj $ M.fromList [("key", JSONStr "string")]),
-      P.parse parseCreate "create {\"key\": 1}" ~?= Right (JSONObj $ M.fromList [("key", JSONNum 1.0)]),
-      P.parse parseCreate "create {\"key\": true}" ~?= Right (JSONObj $ M.fromList [("key", JSONBool True)]),
-      P.parse parseCreate "create {\"key\": false}" ~?= Right (JSONObj $ M.fromList [("key", JSONBool False)]),
-      P.parse parseCreate "create {\"key\": null}" ~?= Right (JSONObj $ M.fromList [("key", JSONNull)]),
-      P.parse parseCreate "create {\"key\": []}" ~?= Right (JSONObj $ M.fromList [("key", JSONList [])]),
-      P.parse parseCreate "create {\"key\": [1, 2, 3]}" ~?= Right (JSONObj $ M.fromList [("key", JSONList [JSONNum 1.0, JSONNum 2.0, JSONNum 3.0])]),
-      P.parse parseCreate "create {\"key\": {}}" ~?= Right (JSONObj $ M.fromList [("key", JSONObj M.empty)]),
-      P.parse parseCreate "create {\"key\": {\"key\": \"string\"}}" ~?= Right (JSONObj $ M.fromList [("key", JSONObj $ M.fromList [("key", JSONStr "string")])])
-    ]
+runHJQLParser :: String -> Either P.ParseError Query
+runHJQLParser = P.parse hjqlP
 
-test_parseRead :: Test
-test_parseRead =
-  TestList
-    [ P.parse parseRead "read [\"key\"]" ~?= Right ["key"],
-      P.parse parseRead "read [\"key\", \"key2\"]" ~?= Right ["key", "key2"],
-      P.parse parseRead "read []" ~?= Right [],
-      P.parse parseRead "create [\"key\"]" ~?= Left "Expected 'read' but got 'create'",
-      P.parse parseRead "read {\"key\": \"string\"}" ~?= Left "Expected '[' but got '{'"
-    ]
+test_parseHJQLWPair :: Test
+test_parseHJQLWPair =
+  "parse write instructions"
+    ~: TestList
+      [ "empty"
+          ~: runHJQLParser
+            "write {}"
+          ~?= Right (Write (QueryBranch [])),
+        "simple"
+          ~: runHJQLParser
+            " write {\n\
+            \    \"key\": \"value\",\n\
+            \}\
+            \"
+          ~?= Right (Write $ QueryBranch [QueryLeaf "key" (JSONStr "value")]),
+        "nested"
+          ~: runHJQLParser
+            " write {\n\
+            \    \"key\" {\
+            \         \"otherkey\": 1\
+            \      },\n\
+            \}\n\
+            \"
+          ~?= Right
+            ( Write $
+                QueryBranch
+                  [ QueryTwig "key" $
+                      QueryBranch [QueryLeaf "otherkey" $ JSONNum 1]
+                  ]
+            ),
+        "multiple, not nested"
+          ~: runHJQLParser
+            "write {\n\
+            \    \"key\": null,\n\
+            \    \"meow\": 0\n\
+            \}\n\
+            \"
+          ~?= Right
+            ( Write $
+                QueryBranch
+                  [ QueryLeaf "key" JSONNull,
+                    QueryLeaf "meow" $ JSONNum 0
+                  ]
+            ),
+        "multiple, nested, fancy JSON"
+          ~: runHJQLParser
+            "write {\n\
+            \    \"key\": null,\n\
+            \    \"meow\" {\n\
+            \      \"warum\": {\"x\": \"hi\", \"y\": [\"bonk\", 0]}\n\
+            \    }\n\
+            \}"
+          ~?= Right
+            ( Write $
+                QueryBranch
+                  [ QueryLeaf "key" JSONNull,
+                    QueryTwig "meow" $
+                      QueryBranch
+                        [ QueryLeaf "warum" $
+                            JSONObj $
+                              M.fromList
+                                [ ("x", JSONStr "hi"),
+                                  ("y", JSONList [JSONStr "bonk", JSONNum 0])
+                                ]
+                        ]
+                  ]
+            )
+      ]
 
-test_parseUpdate :: Test
-test_parseUpdate =
-  TestList
-    [ P.parse parseUpdate "update {\"key\": \"string\"}" ~?= Right (JSONObj $ M.fromList [("key", JSONStr "string")]),
-      P.parse parseUpdate "update {\"key\": 1}" ~?= Right (JSONObj $ M.fromList [("key", JSONNum 1.0)]),
-      P.parse parseUpdate "update {\"key\": true}" ~?= Right (JSONObj $ M.fromList [("key", JSONBool True)]),
-      P.parse parseUpdate "update {\"key\": false}" ~?= Right (JSONObj $ M.fromList [("key", JSONBool False)]),
-      P.parse parseUpdate "update {\"key\": null}" ~?= Right (JSONObj $ M.fromList [("key", JSONNull)]),
-      P.parse parseUpdate "update {\"key\": []}" ~?= Right (JSONObj $ M.fromList [("key", JSONList [])]),
-      P.parse parseUpdate "update {\"key\": [1, 2, 3]}" ~?= Right (JSONObj $ M.fromList [("key", JSONList [JSONNum 1.0, JSONNum 2.0, JSONNum 3.0])]),
-      P.parse parseUpdate "update {\"key\": {}}" ~?= Right (JSONObj $ M.fromList [("key", JSONObj M.empty)]),
-      P.parse parseUpdate "update {\"key\": {\"key\": \"string\"}}" ~?= Right (JSONObj $ M.fromList [("key", JSONObj $ M.fromList [("key", JSONStr "string")])])
-    ]
+test_parseHJQLNoPair :: Test
+test_parseHJQLNoPair =
+  "parse read/delete instructions"
+    ~: TestList
+      [ "empty"
+          ~: runHJQLParser
+            "read {}"
+          ~?= Right (Read (QueryBranch [])),
+        "simple"
+          ~: runHJQLParser
+            " delete {\n\
+            \    \"key\",\n\
+            \}\
+            \"
+          ~?= Right (Delete $ QueryBranch [QueryLeaf "key" ()]),
+        "nested"
+          ~: runHJQLParser
+            " delete {\n\
+            \    \"key\" {\
+            \         \"otherkey\"\
+            \      },\n\
+            \}\n\
+            \"
+          ~?= Right
+            ( Delete $
+                QueryBranch
+                  [ QueryTwig "key" $
+                      QueryBranch [QueryLeaf "otherkey" ()]
+                  ]
+            ),
+        "multiple, not nested"
+          ~: runHJQLParser
+            "delete {\n\
+            \    \"key\",\n\
+            \    \"meow\"\n\
+            \}\n\
+            \"
+          ~?= Right
+            ( Delete $
+                QueryBranch
+                  [ QueryLeaf "key" (),
+                    QueryLeaf "meow" ()
+                  ]
+            ),
+        "multiple, nested"
+          ~: runHJQLParser
+            "read {\n\
+            \    \"key\",\n\
+            \    \"meow\" {\n\
+            \      \"warum\",\n\
+            \    }\n\
+            \}"
+          ~?= Right
+            ( Read $
+                QueryBranch
+                  [ QueryLeaf "key" (),
+                    QueryTwig "meow" $ QueryBranch [QueryLeaf "warum" ()]
+                  ]
+            )
+      ]
 
-test_parseDelete :: Test
-test_parseDelete =
-  TestList
-    [ P.parse parseDelete "delete [\"key\"]" ~?= Right ["key"],
-      P.parse parseDelete "delete [\"key\", \"key2\"]" ~?= Right ["key", "key2"],
-      P.parse parseDelete "delete []" ~?= Right [],
-      P.parse parseDelete "create [\"key\"]" ~?= Left "Expected 'delete' but got 'create'",
-      P.parse parseDelete "delete {\"key\": \"string\"}" ~?= Left "Expected '[' but got '{'"
-    ]
+-- >>> runTestTT test_parseHJQLWPair
+-- Counts {cases = 5, tried = 5, errors = 0, failures = 0}
+
+-- >>> runTestTT test_parseHJQLNoPair
+-- Counts {cases = 5, tried = 5, errors = 0, failures = 0}

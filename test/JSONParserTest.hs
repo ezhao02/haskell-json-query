@@ -15,21 +15,21 @@ instance Arbitrary JSON where
 prop_roundtripJSON :: JSON -> Bool
 prop_roundtripJSON j = P.doParse jsonP (show j) == Just (j, "")
 
-runParser :: String -> Maybe (JSON, String)
-runParser = P.doParse jsonP
+runJSONParser :: String -> Maybe (JSON, String)
+runJSONParser = P.doParse jsonP
 
 testJSONParsePrimitives :: Test
 testJSONParsePrimitives =
   "JSON parsing"
     ~: TestList
-      [ runParser "{}" ~?= Just (JSONObj M.empty, ""),
-        runParser "1" ~?= Just (JSONNum 1.0, ""),
-        runParser "-0.3" ~?= Just (JSONNum (-0.3), ""),
-        runParser "true" ~?= Just (JSONBool True, ""),
-        runParser "[]" ~?= Just (JSONList [], ""),
-        runParser "null" ~?= Just (JSONNull, ""),
-        runParser "\"xxx\"" ~?= Just (JSONStr "xxx", ""),
-        runParser "\"\"" ~?= Just (JSONStr "", "")
+      [ runJSONParser "{}" ~?= Just (JSONObj M.empty, ""),
+        runJSONParser "1" ~?= Just (JSONNum 1.0, ""),
+        runJSONParser "-0.3" ~?= Just (JSONNum (-0.3), ""),
+        runJSONParser "true" ~?= Just (JSONBool True, ""),
+        runJSONParser "[]" ~?= Just (JSONList [], ""),
+        runJSONParser "null" ~?= Just (JSONNull, ""),
+        runJSONParser "\"xxx\"" ~?= Just (JSONStr "xxx", ""),
+        runJSONParser "\"\"" ~?= Just (JSONStr "", "")
       ]
 
 -- >>> runTestTT testJSONParsePrimitives
@@ -39,7 +39,7 @@ testJSONParseObject :: Test
 testJSONParseObject =
   "JSON Object parsing"
     ~: TestList
-      [ runParser
+      [ runJSONParser
           "    {\
           \\n           \"a\": \"hi\",\
           \   \
@@ -49,7 +49,7 @@ testJSONParseObject =
           \     } "
           ~?= Just
             (JSONObj (M.fromList [("bon", JSONBool True), ("xwefoijoij", JSONNum 3.0), ("a", JSONStr "hi")]), ""),
-        runParser "{\"a\":{},\"\":[1, true, true, null, {\"x\":3.2}], \"x\": {\"b\":[],}}"
+        runJSONParser "{\"a\":{},\"\":[1, true, true, null, {\"x\":3.2}], \"x\": {\"b\":[],}}"
           ~?= Just
             ( JSONObj
                 ( M.fromList
@@ -77,9 +77,9 @@ testJSONParseList :: Test
 testJSONParseList =
   "JSON List Parsing"
     ~: TestList
-      [ runParser "[1, 2, 3]" ~?= Just (JSONList [JSONNum 1.0, JSONNum 2.0, JSONNum 3.0], ""),
-        runParser "[1,]" ~?= Just (JSONList [JSONNum 1.0], ""),
-        runParser "[[true, false, true], [null, [true, 0]], [[\"x\",\"y\"],[],[\"z\"]],]"
+      [ runJSONParser "[1, 2, 3]" ~?= Just (JSONList [JSONNum 1.0, JSONNum 2.0, JSONNum 3.0], ""),
+        runJSONParser "[1,]" ~?= Just (JSONList [JSONNum 1.0], ""),
+        runJSONParser "[[true, false, true], [null, [true, 0]], [[\"x\",\"y\"],[],[\"z\"]],]"
           ~?= Just
             ( JSONList
                 [ JSONList [JSONBool True, JSONBool False, JSONBool True],
