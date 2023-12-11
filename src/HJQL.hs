@@ -1,8 +1,10 @@
 module HJQL where
 
+import Data.List (intercalate)
 import Data.Map (Map)
 import Data.Map qualified as M
 import JSONObject
+import System.IO
 import Test.HUnit (Assertion, Counts, Test (..), assert, runTestTT, (~:), (~?=))
 
 type Key = String
@@ -36,8 +38,6 @@ Three possible types of queries (Write, Read, Delete):
 --   | JSONNull
 --   | JSONList [JSON]
 --   deriving (Eq)
-
--- TODO: technically the documents should always be JSONObject, not just any JSON, so maybe use GADTs?
 
 runQuery :: Query -> JSONObj -> Either String JSONObj
 -- Read Query
@@ -108,33 +108,48 @@ runQuery (Delete queryTree) doc =
       Nothing -> Left $ "Key " ++ key ++ " not found"
       Just _ -> Right $ M.delete key doc
 
-jsonObj1 :: JSONObj
-jsonObj1 = M.fromList [("key", JSONStr "string"), ("key2", JSONObj $ M.fromList [("key3", JSONNum 1.0), ("key6", JSONNull)]), ("key4", JSONBool True), ("key5", JSONList [JSONNum 1.0, JSONNum 2.0])]
+showJSON :: Int -> JSON -> String
+showJSON x (JSONNum n) = show n
+showJSON x (JSONStr s) = show s
+showJSON x (JSONObj obj) = showJSONObject x obj
+showJSON x (JSONBool b) = if b then "true" else "false"
+showJSON x JSONNull = "null"
+showJSON x (JSONList list) = "[" ++ intercalate ", " (map (showJSON x) list) ++ "]"
 
-queryRead1 :: Query
-queryRead1 = Read (QueryBranch [QueryLeaf "key" (), QueryTwig "key2" (QueryLeaf "key6" ()), QueryLeaf "key5" ()])
+showJSONObject :: Int -> JSONObj -> String
+showJSONObject indent obj =
+  "{\n"
+    ++ removeTrailingComma (unlines (map showPair (M.toList obj)))
+    ++ replicate indent ' '
+    ++ "}"
+  where
+    showPair (key, value) =
+      replicate (indent + 4) ' ' ++ show key ++ ": " ++ showJSON (indent + 4) value ++ ","
 
-queryRead2 :: Query
-queryRead2 = Read (QueryTwig "key2" (QueryLeaf "key3" ()))
+-- Remove trailing commas from the last pair in the JSON object
+removeTrailingComma :: String -> String
+removeTrailingComma str =
+  case reverse str of
+    '}' : '\n' : ',' : rest -> reverse ('}' : '\n' : rest)
+    '}' : ',' : rest -> reverse ('}' : rest)
+    '\n' : ',' : rest -> reverse ('\n' : rest)
+    _ -> str
 
-queryDelete1 :: Query
-queryDelete1 = Delete (QueryBranch [QueryTwig "key2" (QueryLeaf "key3" ()), QueryLeaf "key5" ()])
-
-queryDelete2 :: Query
-queryDelete2 = Delete (QueryBranch [QueryLeaf "key4" (), QueryLeaf "key2" ()])
-
-queryWrite1 :: Query
-queryWrite1 = Write (QueryLeaf "key" (JSONStr "string2"))
-
-queryWrite2 :: Query
-queryWrite2 = Write (QueryTwig "key2" (QueryLeaf "key3" (JSONBool False)))
-
-queryWrite3 :: Query
-queryWrite3 = Write (QueryBranch [QueryTwig "key2" (QueryLeaf "key6" (JSONBool False)), QueryLeaf "key5" (JSONList [JSONNum 3.0]), QueryLeaf "key" (JSONObj M.empty)])
-
-test_a :: Test
-test_a =
-  TestList
-    [ runQuery queryRead1 jsonObj1 ~?= Right (M.fromList [("key", JSONStr "string"), ("key2", JSONObj $ M.fromList [("key6", JSONNull)]), ("key5", JSONList [JSONNum 1.0, JSONNum 2.0])]),
-      runQuery queryDelete1 jsonObj1 ~?= Right (M.fromList [("key", JSONStr "string"), ("key2", JSONObj (M.fromList [("key6", JSONNull)])), ("key4", JSONBool True)])
+-- Example usage:
+exampleJSONObj :: JSONObj
+exampleJSONObj =
+  M.fromList
+    [ ("name", JSONStr "John"),
+      ("age", JSONNum 25),
+      ("isStudent", JSONBool True),
+      ("grades", JSONList [JSONNum 90, JSONNum 85, JSONNum 92]),
+      ("address", JSONObj (M.fromList [("city", JSONStr "ExampleCity"), ("zip", JSONNum 12345), ("inner", JSONObj (M.fromList [("innerKey", JSONStr "innerValue")]))])),
+      ("hasCar", JSONBool False),
+      ("pets", JSONList [JSONObj (M.fromList [("type", JSONStr "Dog"), ("name", JSONStr "Buddy")])])
     ]
+
+main :: IO ()
+main = do
+  let content = removeTrailingComma $ showJSON 0 (JSONObj exampleJSONObj)
+  putStrLn content
+  writeFile "writeExample.json" content
