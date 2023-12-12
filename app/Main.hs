@@ -32,11 +32,11 @@ main = do
       json <- jsonIO
       case (runQuery query json, query) of
         (Left e, _) -> error e
-        (Right obj, Write _) -> do
+        (Right obj, Read _) -> do
+          print $ JSONObj obj
+          return json
+        (Right obj, _) -> do
+          -- Other instructions mutate
           print $ JSONObj obj
           writeFile jsonFile $ show $ JSONObj obj
           return obj
-        (Right obj, _) -> do
-          -- Other instructions do not mutate
-          print $ JSONObj obj
-          return json

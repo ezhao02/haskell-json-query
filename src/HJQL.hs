@@ -15,6 +15,8 @@ data Query
   | Delete (QueryTree ())
   deriving (Eq, Show)
 
+-- grade <= 100 (left is always a key) && name == eric
+
 data QueryTree a
   = QueryLeaf Key a
   | QueryTwig Key (QueryTree a)

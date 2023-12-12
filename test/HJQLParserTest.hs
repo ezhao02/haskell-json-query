@@ -1,4 +1,4 @@
-module QueryTest where
+module HJQLParserTest where
 
 import Data.Map qualified as M
 import HJQL

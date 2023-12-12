@@ -20,10 +20,12 @@ hjqlListP = P.sepByHanging hjqlP $ some $ P.char '\n'
 
 hjqlP :: Parser Query
 hjqlP =
-  P.wsP $
-    Write <$ P.string "write" <* many P.space <*> queryTreeWValueP
-      <|> Read <$ P.string "read" <* many P.space <*> queryTreeKeyOnlyP
-      <|> Delete <$ P.string "delete" <* many P.space <*> queryTreeKeyOnlyP
+  many P.space
+    *> ( Write <$ P.string "write" <* many P.space <*> queryTreeWValueP
+           <|> Read <$ P.string "read" <* many P.space <*> queryTreeKeyOnlyP
+           <|> Delete <$ P.string "delete" <* many P.space <*> queryTreeKeyOnlyP
+       )
+    <* many (P.filter (/= '\n') P.space)
 
 -- | Parser for query path for read and delete queries
 queryTreeKeyOnlyP :: Parser (QueryTree ())

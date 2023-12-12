@@ -1,4 +1,4 @@
-module ParserTest where
+module JSONParserTest where
 
 import Data.Map qualified as M
 import HJQLParser

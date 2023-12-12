@@ -1,0 +1,27 @@
+read {
+    "name",
+    "job" {
+        "loc"
+    },
+    "children",
+}
+
+delete {
+    "children",
+    "job" {
+        "loc"
+    }
+}
+
+write {
+    "tails": {},
+    "alive": true,
+    "job" {
+        "ceo": "Oompa-Loompa",
+        "workers": [
+            {"name": "Bing Bong", "age": 47,},
+            "Boris",
+            -1.0
+        ]
+    }
+}
