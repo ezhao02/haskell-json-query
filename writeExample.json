@@ -1,0 +1,18 @@
+{
+    "address": {
+        "city": "ExampleCity",
+        "inner": {
+            "innerKey": "innerValue"
+        },
+        "zip": 12345.0
+    },
+    "age": 25.0,
+    "grades": [90.0, 85.0, 92.0],
+    "hasCar": false,
+    "isStudent": true,
+    "name": "John",
+    "pets": [{
+        "name": "Buddy",
+        "type": "Dog"
+    }]
+}
