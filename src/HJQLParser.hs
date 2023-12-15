@@ -33,26 +33,50 @@ hjqlP =
        )
     <* many (P.filter (/= '\n') P.space)
 
+-- | Parser for filters on list queries
+queryListFilterP :: Parser JSONObj
+queryListFilterP =
+  M.fromList <$> P.wsP (P.sepBy1 eqConstraintP (P.string "&&"))
+  where
+    eqConstraintP :: Parser (Key, JSON)
+    eqConstraintP = (,) <$> P.wsP JP.strP <* P.string "==" <*> JP.jsonP
+
+-- | Parser for filters on list queries that defaults to empty if none found
+queryListFilterOrNoneP :: Parser JSONObj
+queryListFilterOrNoneP = P.char '|' *> queryListFilterP <|> pure M.empty
+
+-- | Parser for list queries that applies the given parser to the inner elements
+queryListP :: Parser (QueryTree a) -> Parser (QueryTree a)
+queryListP treeP =
+  QueryList
+    <$> P.wsP JP.strP
+    <*> queryListFilterOrNoneP
+    <*> P.brackets treeP
+    <* many P.space
+
+-- | Parser for query twigs that applies the given parser to the inner elements
+queryTwigP :: Parser (QueryTree a) -> Parser (QueryTree a)
+queryTwigP treeP =
+  QueryTwig <$> P.wsP JP.strP <*> P.braces treeP <* many P.space
+
 -- | Parser for query path for read and delete queries
 queryTreeKeyOnlyP :: Parser (QueryTree ())
 queryTreeKeyOnlyP =
-  QueryBranch <$> P.wsP (P.sepByHanging queryTreeKeyOnlyNoBranchP $ P.char ',')
+  QueryBranch <$> P.wsP (P.sepByHanging queryTreeKeyOnlyNoBranchP (P.char ','))
 
 queryTreeKeyOnlyNoBranchP :: Parser (QueryTree ())
 queryTreeKeyOnlyNoBranchP =
-  QueryList <$> P.wsP JP.strP <*> pure M.empty <*> undefined <*> P.brackets queryTreeKeyOnlyP <* many P.space
-    <|> undefined -- TODO: QueryList with filters
-    <|> QueryTwig <$> P.wsP JP.strP <*> P.braces queryTreeKeyOnlyP <* many P.space
+  queryListP queryTreeKeyOnlyP
+    <|> queryTwigP queryTreeKeyOnlyP
     <|> QueryLeaf <$> P.wsP JP.strP <*> pure ()
 
 -- | Parser for query path for write queries
 queryTreeWValueP :: Parser (QueryTree JSON)
 queryTreeWValueP =
-  QueryBranch <$> P.wsP (P.sepByHanging queryTreeWValueNoBranchP $ P.char ',')
+  QueryBranch <$> P.wsP (P.sepByHanging queryTreeWValueNoBranchP (P.char ','))
 
 queryTreeWValueNoBranchP :: Parser (QueryTree JSON)
 queryTreeWValueNoBranchP =
-  QueryList <$> P.wsP JP.strP <*> pure M.empty <*> undefined <*> P.brackets queryTreeWValueP <* many P.space
-    <|> undefined -- TODO: QueryList with filters
-    <|> QueryTwig <$> P.wsP JP.strP <*> P.braces queryTreeWValueP <* many P.space
+  queryListP queryTreeWValueP
+    <|> queryTwigP queryTreeWValueP
     <|> QueryLeaf <$> P.wsP JP.strP <* P.char ':' <*> JP.jsonP
