@@ -1,0 +1,186 @@
+{
+    "afc": {
+        "Kansas City Chiefs": {
+            "wins": 9,
+            "losses": 5,
+            "ties": 0,
+            "Pct": 0.643,
+            "PF": 319,
+            "PA": 245,
+            "Home": "4-3",
+            "Away": "5-2",
+            "Strk": "W1",
+            "players": [
+                {
+                    "name": "Patrick Mahomes",
+                    "position": "QB",
+                    "jersey": 15,
+                    "height": 75,
+                    "weight": 230,
+                    "college": "Texas Tech"
+                },
+                {
+                    "name": "Tyreek Hill",
+                    "position": "WR",
+                    "jersey": 10,
+                    "height": 70,
+                    "weight": 185,
+                    "college": "West Alabama"
+                },
+                {
+                    "name": "Clyde Edwards-Helaire",
+                    "position": "RB",
+                    "jersey": 25,
+                    "height": 68,
+                    "weight": 207,
+                    "college": "LSU"
+                },
+                {
+                    "name": "Travis Kelce",
+                    "position": "TE",
+                    "jersey": 87,
+                    "height": 78,
+                    "weight": 260,
+                    "college": "Cincinnati"
+                }
+            ]
+        },
+        "Baltimore Ravens": {
+            "wins": 11,
+            "losses": 3,
+            "ties": 0,
+            "Pct": 0.786,
+            "PF": 384,
+            "PA": 225,
+            "Home": "5-2",
+            "Away": "6-1",
+            "Strk": "W4",
+            "players": [
+                {
+                    "name": "Lamar Jackson",
+                    "position": "QB",
+                    "jersey": 8,
+                    "height": 74,
+                    "weight": 212,
+                    "college": "Louisville"
+                },
+                {
+                    "name": "Marquise Brown",
+                    "position": "WR",
+                    "jersey": 5,
+                    "height": 69,
+                    "weight": 170,
+                    "college": "Oklahoma"
+                },
+                {
+                    "name": "J.K. Dobbins",
+                    "position": "RB",
+                    "jersey": 27,
+                    "height": 70,
+                    "weight": 212,
+                    "college": "Ohio State"
+                },
+                {
+                    "name": "Mark Andrews",
+                    "position": "TE",
+                    "jersey": 89,
+                    "height": 77,
+                    "weight": 256,
+                    "college": "Oklahoma"
+                }
+            ]
+        }
+    },
+    "nfc": {
+        "Philadelphia Eagles": {
+            "wins": 10,
+            "losses": 3,
+            "ties": 0,
+            "Pct": 0.769,
+            "PF": 342,
+            "PA": 321,
+            "Home": "5-1",
+            "Away": "5-2",
+            "Strk": "L2",
+            "players": [
+                {
+                    "name": "Jalen Hurts",
+                    "position": "QB",
+                    "jersey": 1,
+                    "height": 73,
+                    "weight": 223,
+                    "college": "Oklahoma"
+                },
+                {
+                    "name": "A.J Brown",
+                    "position": "WR",
+                    "jersey": 11,
+                    "height": 72,
+                    "weight": 226,
+                    "college": "Ole Miss"
+                },
+                {
+                    "name": "D'Andre Swift",
+                    "position": "RB",
+                    "jersey": 32,
+                    "height": 70,
+                    "weight": 212,
+                    "college": "Georgia"
+                },
+                {
+                    "name": "Devonte Smith",
+                    "position": "WR",
+                    "jersey": 6,
+                    "height": 72,
+                    "weight": 175,
+                    "college": "Alabama"
+                }
+            ]
+        },
+        "Dallas Cowboys": {
+            "wins": 9,
+            "losses": 4,
+            "ties": 0,
+            "Pct": 0.692,
+            "PF": 393,
+            "PA": 303,
+            "Home": "5-2",
+            "Away": "4-2",
+            "Strk": "W1",
+            "players": [
+                {
+                    "name": "Dak Prescott",
+                    "position": "QB",
+                    "jersey": 4,
+                    "height": 74,
+                    "weight": 238,
+                    "college": "Mississippi State"
+                },
+                {
+                    "name": "Amari Cooper",
+                    "position": "WR",
+                    "jersey": 19,
+                    "height": 73,
+                    "weight": 210,
+                    "college": "Alabama"
+                },
+                {
+                    "name": "Ezekiel Elliott",
+                    "position": "RB",
+                    "jersey": 21,
+                    "height": 72,
+                    "weight": 228,
+                    "college": "Ohio State"
+                },
+                {
+                    "name": "CeeDee Lamb",
+                    "position": "WR",
+                    "jersey": 88,
+                    "height": 73,
+                    "weight": 198,
+                    "college": "Oklahoma"
+                }
+            ]
+        }
+    }
+}
