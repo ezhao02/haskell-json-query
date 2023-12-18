@@ -2,11 +2,11 @@
     "name": "Company C",
     "address": "456 Business Avenue, City, Country",
     "founded_year": 2000,
-    "departments": [
+    "sections": [
         {
-            "department_id": 1,
-            "department_name": "Engineering",
-            "department_head": {
+            "section_id": 1,
+            "section_name": "Engineering",
+            "section_head": {
                 "name": "John Smith",
                 "position": "VP of Engineering",
                 "email": "john.smith@examplecorp.com",
@@ -68,9 +68,9 @@
             ]
         },
         {
-            "department_id": 2,
-            "department_name": "Sales & Marketing",
-            "department_head": {
+            "section_id": 2,
+            "section_name": "Sales & Marketing",
+            "section_head": {
                 "name": "Alice Clark",
                 "position": "VP of Sales & Marketing",
                 "email": "alice.clark@examplecorp.com",
