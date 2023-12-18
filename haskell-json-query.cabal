@@ -1,12 +1,12 @@
 cabal-version:  2.2
-name:           project-cis5520
+name:           haskell-json-query
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/project-cis5520#readme>
-homepage:       https://github.com/githubuser/project-cis5520#readme
-bug-reports:    https://github.com/githubuser/project-cis5520/issues
-author:         Author name here
+description:    Please see the README on GitHub at <https://github.com/ezhao02/haskell-json-query#readme>
+homepage:       https://github.com/ezhao02/haskell-json-query#readme
+bug-reports:    https://github.com/ezhao02/haskell-json-query/issues
+author:         Eric Zhao, Henghak Kun
 maintainer:     example@example.com
-copyright:      2022 Author name here
+copyright:      2023 Eric Zhao, Henghak Kun
 license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
@@ -16,7 +16,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/project-cis5520
+  location: https://github.com/githubuser/haskell-json-query
 
 common common-stanza
   ghc-options:         -Wno-type-defaults -fwarn-incomplete-patterns
@@ -51,7 +51,7 @@ library
   hs-source-dirs:
       src
 
-executable project-cis5520-exe
+executable haskell-json-query-exe
   import:
       common-stanza
   main-is: 
@@ -60,10 +60,10 @@ executable project-cis5520-exe
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      project-cis5520
+      haskell-json-query
 
 
-test-suite project-cis5520-test
+test-suite haskell-json-query-test
   import:
       common-stanza
   type: 
@@ -78,5 +78,5 @@ test-suite project-cis5520-test
       JSONParserTest
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      project-cis5520
+      haskell-json-query
 

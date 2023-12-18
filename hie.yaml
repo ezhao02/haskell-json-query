@@ -1,9 +1,9 @@
 cradle:
   stack:
     - path: ./test
-      component: "project-cis5520:test:project-cis5520-test"
+      component: "haskell-json-query:test:haskell-json-query-test"
     - path: ./src
-      component: "project-cis5520:lib"
+      component: "haskell-json-query:lib"
     - path: ./app
-      component: "project-cis5520:exe:project-cis5520-exe"
+      component: "haskell-json-query:exe:haskell-json-query-exe"
 
