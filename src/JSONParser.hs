@@ -1,4 +1,4 @@
-module JSONParser where
+module JSONParser (parseJSONFile, jsonP) where
 
 -- imports
 import Control.Applicative
@@ -25,39 +25,12 @@ parseJSONFile = P.parseFromFile jsonP
 jsonP :: Parser JSON
 jsonP =
   P.wsP $
-    (JSONNum <$> numP)
-      <|> (JSONStr <$> strP)
-      <|> (JSONBool <$> boolP)
+    (JSONNum <$> P.numP)
+      <|> (JSONStr <$> P.strP)
+      <|> (JSONBool <$> P.boolP)
       <|> (JSONNull <$ nullP)
       <|> (JSONObj <$> objP)
       <|> (JSONList <$> listP)
-
--- Parser for getting a floating point value for JSONNum
-numP :: Parser Float
-numP =
-  let nonNegSignificandParser =
-        ( ((++) <$> some P.digit <*> ((:) <$> P.char '.' <*> some P.digit))
-            <|> some P.digit
-        )
-      exponentParser =
-        (:)
-          <$> P.char 'e'
-          <*> ( (:) <$> P.char '-' <*> some P.digit
-                  <|> some P.digit
-              )
-      nonNegFloatParser =
-        (++) <$> nonNegSignificandParser <*> exponentParser
-          <|> nonNegSignificandParser
-   in (read :: String -> Float)
-        <$> (((:) <$> P.char '-' <*> nonNegFloatParser) <|> nonNegFloatParser)
-
--- Parser for getting a string value for JSONStr
-strP :: Parser String
-strP = P.between (P.char '"') (many (P.filter ('"' /=) P.get)) (P.char '"')
-
--- Parser for getting a boolean value for JSONBool
-boolP :: Parser Bool
-boolP = (True <$ P.string "true") <|> (False <$ P.string "false")
 
 -- | Parser for getting a null value for JSONNull
 nullP :: Parser String
@@ -69,7 +42,7 @@ objP = Map.fromList <$> P.braces (P.wsP $ P.sepByHanging kvPairP $ P.char ',')
 
 -- | Parser for getting a key value pair
 kvPairP :: Parser (String, JSON)
-kvPairP = (,) <$> P.wsP strP <* P.char ':' <*> jsonP
+kvPairP = (,) <$> P.wsP P.strP <* P.char ':' <*> jsonP
 
 -- | Parser for getting a list of JSON
 listP :: Parser [JSON]

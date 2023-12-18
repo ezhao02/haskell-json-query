@@ -35,6 +35,9 @@ module Parser
     braces,
     brackets,
     wsP,
+    numP,
+    strP,
+    boolP,
   )
 where
 
@@ -210,3 +213,30 @@ sepByHanging p sep = noHangingSepP <* sep <|> noHangingSepP
   where
     noHangingSepP :: Parser [a]
     noHangingSepP = sepBy p sep
+
+-- Parser for getting a floating point value
+numP :: Parser Float
+numP =
+  let nonNegSignificandParser =
+        ( ((++) <$> some digit <*> ((:) <$> char '.' <*> some digit))
+            <|> some digit
+        )
+      exponentParser =
+        (:)
+          <$> char 'e'
+          <*> ( (:) <$> char '-' <*> some digit
+                  <|> some digit
+              )
+      nonNegFloatParser =
+        (++) <$> nonNegSignificandParser <*> exponentParser
+          <|> nonNegSignificandParser
+   in (read :: String -> Float)
+        <$> (((:) <$> char '-' <*> nonNegFloatParser) <|> nonNegFloatParser)
+
+-- Parser for getting a string value
+strP :: Parser String
+strP = between (char '"') (many (filter ('"' /=) get)) (char '"')
+
+-- Parser for getting a boolean value
+boolP :: Parser Bool
+boolP = (True <$ string "true") <|> (False <$ string "false")

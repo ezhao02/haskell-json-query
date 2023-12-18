@@ -1,4 +1,8 @@
-module JSONObject where
+module JSONObject
+  ( JSONObj,
+    JSON (JSONNum, JSONStr, JSONObj, JSONBool, JSONNull, JSONList),
+  )
+where
 
 import Data.List (intercalate)
 import Data.Map (Map)

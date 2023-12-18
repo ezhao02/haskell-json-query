@@ -1,4 +1,9 @@
-module HJQLParser where
+module HJQLParser
+  ( parseHJQLFile,
+    hjqlListP,
+    hjqlP,
+  )
+where
 
 import Control.Applicative
 import Data.Char qualified as Char
@@ -39,7 +44,7 @@ queryListFilterP =
   M.fromList <$> P.wsP (P.sepBy1 eqConstraintP (P.string "&&"))
   where
     eqConstraintP :: Parser (Key, JSON)
-    eqConstraintP = (,) <$> P.wsP JP.strP <* P.string "==" <*> JP.jsonP
+    eqConstraintP = (,) <$> P.wsP P.strP <* P.string "==" <*> JP.jsonP
 
 -- | Parser for filters on list queries that defaults to empty if none found
 queryListFilterOrNoneP :: Parser JSONObj
@@ -49,7 +54,7 @@ queryListFilterOrNoneP = P.char '|' *> queryListFilterP <|> pure M.empty
 queryListP :: Parser (QueryTree a) -> Parser (QueryTree a)
 queryListP treeP =
   QueryList
-    <$> P.wsP JP.strP
+    <$> P.wsP P.strP
     <*> queryListFilterOrNoneP
     <*> P.brackets treeP
     <* many P.space
@@ -57,7 +62,7 @@ queryListP treeP =
 -- | Parser for query twigs that applies the given parser to the inner elements
 queryTwigP :: Parser (QueryTree a) -> Parser (QueryTree a)
 queryTwigP treeP =
-  QueryTwig <$> P.wsP JP.strP <*> P.braces treeP <* many P.space
+  QueryTwig <$> P.wsP P.strP <*> P.braces treeP <* many P.space
 
 -- | Parser for query path for read and delete queries
 queryTreeKeyOnlyP :: Parser (QueryTree ())
@@ -68,7 +73,7 @@ queryTreeKeyOnlyNoBranchP :: Parser (QueryTree ())
 queryTreeKeyOnlyNoBranchP =
   queryListP queryTreeKeyOnlyP
     <|> queryTwigP queryTreeKeyOnlyP
-    <|> QueryLeaf <$> P.wsP JP.strP <*> pure ()
+    <|> QueryLeaf <$> P.wsP P.strP <*> pure ()
 
 -- | Parser for query path for write queries
 queryTreeWValueP :: Parser (QueryTree JSON)
@@ -79,4 +84,4 @@ queryTreeWValueNoBranchP :: Parser (QueryTree JSON)
 queryTreeWValueNoBranchP =
   queryListP queryTreeWValueP
     <|> queryTwigP queryTreeWValueP
-    <|> QueryLeaf <$> P.wsP JP.strP <* P.char ':' <*> JP.jsonP
+    <|> QueryLeaf <$> P.wsP P.strP <* P.char ':' <*> JP.jsonP
