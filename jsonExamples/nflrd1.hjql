@@ -1,0 +1,15 @@
+read {
+    "afc" {
+        "Kansas City Chiefs" {
+            "wins",
+            "losses",
+            "ties",
+            "players" [
+                "name",
+                "position",
+                "jersey",
+                "college"
+            ]
+        }
+    }
+}

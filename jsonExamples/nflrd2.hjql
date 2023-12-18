@@ -1,0 +1,30 @@
+read {
+    "afc" {
+        "Kansas City Chiefs" {
+            "wins",
+            "losses",
+            "ties",
+            "Strk",
+            "players" | "position" == "QB" [
+                "name",
+                "position",
+                "jersey",
+                "college"
+            ]
+        }
+    },
+    "nfc" {
+        "Philadelphia Eagles" {
+            "wins",
+            "losses",
+            "ties",
+            "Strk",
+            "players" | "position" == "QB" [
+                "name",
+                "position",
+                "jersey",
+                "college"
+            ]
+        }
+    }
+}

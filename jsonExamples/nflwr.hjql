@@ -1,0 +1,49 @@
+write {
+    "afc" {
+        "Buffalo Bills": {
+            "wins": 8,
+            "losses": 6,
+            "ties": 0,
+            "Pct": 0.571,
+            "PF": 358,
+            "PA": 300,
+            "Home": "4-3",
+            "Away": "4-3",
+            "Strk": "W1",
+            "players": [
+                {
+                    "name": "Josh Allen",
+                    "position": "QB",
+                    "jersey": 17,
+                    "height": 77,
+                    "weight": 237,
+                    "college": "Wyoming"
+                },
+                {
+                    "name": "Stefon Diggs",
+                    "position": "WR",
+                    "jersey": 14,
+                    "height": 72,
+                    "weight": 191,
+                    "college": "Maryland"
+                },
+                {
+                    "name": "Devin Singletary",
+                    "position": "RB",
+                    "jersey": 26,
+                    "height": 68,
+                    "weight": 203,
+                    "college": "Florida Atlantic"
+                },
+                {
+                    "name": "Cole Beasley",
+                    "position": "WR",
+                    "jersey": 11,
+                    "height": 68,
+                    "weight": 174,
+                    "college": "Southern Methodist"
+                }
+            ]
+        }
+    }
+}

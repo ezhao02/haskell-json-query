@@ -1,0 +1,8 @@
+write {
+    "principal": "Miss Skilensky",
+    "supervisor": "Mr. Beans",
+    "city_ranking": 3,
+    "active": true,
+    "closing": null,
+    "address": "321 Pringle Drive, Chicago, Illinois"
+}

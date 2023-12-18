@@ -1,0 +1,193 @@
+{
+    "name": "Company C",
+    "address": "456 Business Avenue, City, Country",
+    "founded_year": 2000,
+    "departments": [
+        {
+            "department_id": 1,
+            "department_name": "Engineering",
+            "department_head": {
+                "name": "John Smith",
+                "position": "VP of Engineering",
+                "email": "john.smith@examplecorp.com",
+                "phone": "+1234567890"
+            },
+            "teams": [
+                {
+                    "team_id": 101,
+                    "team_name": "Software Development",
+                    "team_leader": {
+                        "name": "Emily Johnson",
+                        "position": "Software Development Manager",
+                        "email": "emily.johnson@examplecorp.com",
+                        "phone": "+1987654321"
+                    },
+                    "employees": [
+                        {
+                            "employee_id": 1001,
+                            "name": "Michael Davis",
+                            "position": "Software Engineer",
+                            "email": "michael.davis@examplecorp.com",
+                            "phone": "+1654321897"
+                        },
+                        {
+                            "employee_id": 1002,
+                            "name": "Sophia Brown",
+                            "position": "Senior Software Engineer",
+                            "email": "sophia.brown@examplecorp.com",
+                            "phone": "+1230987654"
+                        }
+                    ]
+                },
+                {
+                    "team_id": 102,
+                    "team_name": "Hardware Development",
+                    "team_leader": {
+                        "name": "William Miller",
+                        "position": "Hardware Development Manager",
+                        "email": "william.miller@examplecorp.com",
+                        "phone": "+9876543210"
+                    },
+                    "employees": [
+                        {
+                            "employee_id": 1003,
+                            "name": "Emma Wilson",
+                            "position": "Hardware Engineer",
+                            "email": "emma.wilson@examplecorp.com",
+                            "phone": "+1357924680"
+                        },
+                        {
+                            "employee_id": 1004,
+                            "name": "Daniel Garcia",
+                            "position": "Senior Hardware Engineer",
+                            "email": "daniel.garcia@examplecorp.com",
+                            "phone": "+2468013579"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "department_id": 2,
+            "department_name": "Sales & Marketing",
+            "department_head": {
+                "name": "Alice Clark",
+                "position": "VP of Sales & Marketing",
+                "email": "alice.clark@examplecorp.com",
+                "phone": "+1122334455"
+            },
+            "teams": [
+                {
+                    "team_id": 201,
+                    "team_name": "Sales",
+                    "team_leader": {
+                        "name": "Oliver Martinez",
+                        "position": "Sales Manager",
+                        "email": "oliver.martinez@examplecorp.com",
+                        "phone": "+9988776655"
+                    },
+                    "employees": [
+                        {
+                            "employee_id": 1005,
+                            "name": "Ava Lee",
+                            "position": "Sales Representative",
+                            "email": "ava.lee@examplecorp.com",
+                            "phone": "+5544332211"
+                        },
+                        {
+                            "employee_id": 1006,
+                            "name": "Noah Rodriguez",
+                            "position": "Senior Sales Representative",
+                            "email": "noah.rodriguez@examplecorp.com",
+                            "phone": "+7788990011"
+                        }
+                    ]
+                },
+                {
+                    "team_id": 202,
+                    "team_name": "Marketing",
+                    "team_leader": {
+                        "name": "Isabella Perez",
+                        "position": "Marketing Manager",
+                        "email": "isabella.perez@examplecorp.com",
+                        "phone": "+6677889900"
+                    },
+                    "employees": [
+                        {
+                            "employee_id": 1007,
+                            "name": "Liam Nguyen",
+                            "position": "Marketing Specialist",
+                            "email": "liam.nguyen@examplecorp.com",
+                            "phone": "+1122334455"
+                        },
+                        {
+                            "employee_id": 1008,
+                            "name": "Mia King",
+                            "position": "Senior Marketing Specialist",
+                            "email": "mia.king@examplecorp.com",
+                            "phone": "+3344556677"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "all_employees": [
+        {
+            "employee_id": 1001,
+            "name": "Michael Davis",
+            "position": "Software Engineer",
+            "email": "michael.davis@examplecorp.com",
+            "phone": "+1654321897"
+        },
+        {
+            "employee_id": 1002,
+            "name": "Sophia Brown",
+            "position": "Senior Software Engineer",
+            "email": "sophia.brown@examplecorp.com",
+            "phone": "+1230987654"
+        },
+        {
+            "employee_id": 1003,
+            "name": "Emma Wilson",
+            "position": "Hardware Engineer",
+            "email": "emma.wilson@examplecorp.com",
+            "phone": "+1357924680"
+        },
+        {
+            "employee_id": 1004,
+            "name": "Daniel Garcia",
+            "position": "Senior Hardware Engineer",
+            "email": "daniel.garcia@examplecorp.com",
+            "phone": "+2468013579"
+        },
+        {
+            "employee_id": 1005,
+            "name": "Ava Lee",
+            "position": "Sales Representative",
+            "email": "ava.lee@examplecorp.com",
+            "phone": "+5544332211"
+        },
+        {
+            "employee_id": 1006,
+            "name": "Noah Rodriguez",
+            "position": "Senior Sales Representative",
+            "email": "noah.rodriguez@examplecorp.com",
+            "phone": "+7788990011"
+        },
+        {
+            "employee_id": 1007,
+            "name": "Liam Nguyen",
+            "position": "Marketing Specialist",
+            "email": "liam.nguyen@examplecorp.com",
+            "phone": "+1122334455"
+        },
+        {
+            "employee_id": 1008,
+            "name": "Mia King",
+            "position": "Senior Marketing Specialist",
+            "email": "mia.king@examplecorp.com",
+            "phone": "+3344556677"
+        }
+    ]
+}

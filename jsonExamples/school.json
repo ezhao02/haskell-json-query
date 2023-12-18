@@ -1,0 +1,125 @@
+{
+    "address": "123 Main Street, City, Country",
+    "departments": [
+        {
+            "classes": [
+                {
+                    "class_id": 101.0,
+                    "class_name": "Biology",
+                    "students": [
+                        {
+                            "age": 16.0,
+                            "grade": "11th",
+                            "name": "Alice Smith",
+                            "student_id": 1001.0
+                        },
+                        {
+                            "age": 17.0,
+                            "grade": "12th",
+                            "name": "Bob Johnson",
+                            "student_id": 1002.0
+                        }
+                    ],
+                    "teacher": {
+                        "email": "sarah.brown@example.com",
+                        "name": "Ms. Sarah Brown",
+                        "phone": "+1987654321",
+                        "teacher_id": 5001.0
+                    }
+                },
+                {
+                    "class_id": 102.0,
+                    "class_name": "Chemistry",
+                    "students": [
+                        {
+                            "age": 15.0,
+                            "grade": "10th",
+                            "name": "Charlie Davis",
+                            "student_id": 1003.0
+                        },
+                        {
+                            "age": 16.0,
+                            "grade": "11th",
+                            "name": "Diana Wilson",
+                            "student_id": 1004.0
+                        }
+                    ],
+                    "teacher": {
+                        "email": "michael.johnson@example.com",
+                        "name": "Mr. Michael Johnson",
+                        "phone": "+1654321897",
+                        "teacher_id": 5002.0
+                    }
+                }
+            ],
+            "department_id": 1.0,
+            "department_name": "Science",
+            "head_of_department": {
+                "email": "john.doe@example.com",
+                "name": "Professor John Doe",
+                "phone": "+1234567890"
+            }
+        },
+        {
+            "classes": [
+                {
+                    "class_id": 201.0,
+                    "class_name": "Algebra",
+                    "students": [
+                        {
+                            "age": 14.0,
+                            "grade": "9th",
+                            "name": "Eva Garcia",
+                            "student_id": 1005.0
+                        },
+                        {
+                            "age": 15.0,
+                            "grade": "10th",
+                            "name": "Frank Adams",
+                            "student_id": 1006.0
+                        }
+                    ],
+                    "teacher": {
+                        "email": "olivia.martinez@example.com",
+                        "name": "Ms. Olivia Martinez",
+                        "phone": "+1230987654",
+                        "teacher_id": 5003.0
+                    }
+                },
+                {
+                    "class_id": 202.0,
+                    "class_name": "Calculus",
+                    "students": [
+                        {
+                            "age": 17.0,
+                            "grade": "12th",
+                            "name": "Grace Lee",
+                            "student_id": 1007.0
+                        },
+                        {
+                            "age": 16.0,
+                            "grade": "11th",
+                            "name": "Henry Clark",
+                            "student_id": 1008.0
+                        }
+                    ],
+                    "teacher": {
+                        "email": "david.taylor@example.com",
+                        "name": "Mr. David Taylor",
+                        "phone": "+9876543210",
+                        "teacher_id": 5004.0
+                    }
+                }
+            ],
+            "department_id": 2.0,
+            "department_name": "Mathematics",
+            "head_of_department": {
+                "email": "emily.white@example.com",
+                "name": "Professor Emily White",
+                "phone": "+9876543210"
+            }
+        }
+    ],
+    "founded_year": 1899.0,
+    "name": "School ABC"
+}

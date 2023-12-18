@@ -1,0 +1,15 @@
+read {
+    "name",
+    "departments" [
+        "department_name",
+        "head_of_department",
+        "classes" [
+            "class_name",
+            "students" [
+                "name",
+                "age",
+                "grade"
+            ]
+        ]
+    ]
+}

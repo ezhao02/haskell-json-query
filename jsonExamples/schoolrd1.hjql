@@ -1,0 +1,5 @@
+read {
+    "name",
+    "address",
+    "departments"
+}
