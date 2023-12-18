@@ -1,0 +1,127 @@
+{
+    "school": {
+        "name": "Example School",
+        "address": "123 Main Street, City, Country",
+        "founded_year": 1899,
+        "departments": [
+            {
+                "department_id": 1,
+                "department_name": "Science",
+                "head_of_department": {
+                    "name": "Professor John Doe",
+                    "email": "john.doe@example.com",
+                    "phone": "+1234567890"
+                },
+                "classes": [
+                    {
+                        "class_id": 101,
+                        "class_name": "Biology",
+                        "students": [
+                            {
+                                "student_id": 1001,
+                                "name": "Alice Smith",
+                                "age": 16,
+                                "grade": "11th"
+                            },
+                            {
+                                "student_id": 1002,
+                                "name": "Bob Johnson",
+                                "age": 17,
+                                "grade": "12th"
+                            }
+                        ],
+                        "teacher": {
+                            "teacher_id": 5001,
+                            "name": "Ms. Sarah Brown",
+                            "email": "sarah.brown@example.com",
+                            "phone": "+1987654321"
+                        }
+                    },
+                    {
+                        "class_id": 102,
+                        "class_name": "Chemistry",
+                        "students": [
+                            {
+                                "student_id": 1003,
+                                "name": "Charlie Davis",
+                                "age": 15,
+                                "grade": "10th"
+                            },
+                            {
+                                "student_id": 1004,
+                                "name": "Diana Wilson",
+                                "age": 16,
+                                "grade": "11th"
+                            }
+                        ],
+                        "teacher": {
+                            "teacher_id": 5002,
+                            "name": "Mr. Michael Johnson",
+                            "email": "michael.johnson@example.com",
+                            "phone": "+1654321897"
+                        }
+                    }
+                ]
+            },
+            {
+                "department_id": 2,
+                "department_name": "Mathematics",
+                "head_of_department": {
+                    "name": "Professor Emily White",
+                    "email": "emily.white@example.com",
+                    "phone": "+9876543210"
+                },
+                "classes": [
+                    {
+                        "class_id": 201,
+                        "class_name": "Algebra",
+                        "students": [
+                            {
+                                "student_id": 1005,
+                                "name": "Eva Garcia",
+                                "age": 14,
+                                "grade": "9th"
+                            },
+                            {
+                                "student_id": 1006,
+                                "name": "Frank Adams",
+                                "age": 15,
+                                "grade": "10th"
+                            }
+                        ],
+                        "teacher": {
+                            "teacher_id": 5003,
+                            "name": "Ms. Olivia Martinez",
+                            "email": "olivia.martinez@example.com",
+                            "phone": "+1230987654"
+                        }
+                    },
+                    {
+                        "class_id": 202,
+                        "class_name": "Calculus",
+                        "students": [
+                            {
+                                "student_id": 1007,
+                                "name": "Grace Lee",
+                                "age": 17,
+                                "grade": "12th"
+                            },
+                            {
+                                "student_id": 1008,
+                                "name": "Henry Clark",
+                                "age": 16,
+                                "grade": "11th"
+                            }
+                        ],
+                        "teacher": {
+                            "teacher_id": 5004,
+                            "name": "Mr. David Taylor",
+                            "email": "david.taylor@example.com",
+                            "phone": "+9876543210"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
