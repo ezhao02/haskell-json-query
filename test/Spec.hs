@@ -12,6 +12,7 @@ main = do
   runTestTT testJSONParseObject
   runTestTT testJSONParseList
   putStrLn "Testing HJQL Parsing"
+  quickCheck prop_roundtripHJQL
   runTestTT test_parseHJQLNoPair
   runTestTT test_parseHJQLWPair
   putStrLn "Testing Running Queries"

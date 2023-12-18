@@ -3,7 +3,8 @@
 module HJQL where
 
 import Data.Either (rights)
-import Data.List (intercalate)
+import Data.Function ((&))
+import Data.List (intercalate, intersperse)
 import Data.Map (Map)
 import Data.Map qualified as M
 import Data.Maybe (catMaybes)
@@ -17,9 +18,7 @@ data Query
   = Write (QueryTree JSON)
   | Read (QueryTree ())
   | Delete (QueryTree ())
-  deriving (Eq, Show)
-
--- grade <= 100 (left is always a key) && name == eric
+  deriving (Eq)
 
 data QueryTree a
   = QueryLeaf Key a
@@ -27,6 +26,59 @@ data QueryTree a
   | QueryBranch [QueryTree a]
   | QueryList Key (Map Key JSON) (QueryTree a)
   deriving (Eq, Show)
+
+instance Show Query where
+  show (Write t) = "write {\n" ++ showIndent ((": " ++) . show) 4 t ++ "\n}"
+  show (Read t) = "read {\n" ++ showIndent (const "") 4 t ++ "\n}"
+  show (Delete t) = "delete {\n" ++ showIndent (const "") 4 t ++ "\n}"
+
+showQuery :: Query -> String
+showQuery (Write t) = "write {\n" ++ showIndent ((": " ++) . show) 4 t ++ "\n}"
+showQuery (Read t) = "read {\n" ++ showIndent (const "") 4 t ++ "\n}"
+showQuery (Delete t) = "delete {\n" ++ showIndent (const "") 4 t ++ "\n}"
+
+showIndent :: (a -> String) -> Int -> QueryTree a -> String
+showIndent f i (QueryLeaf k j) =
+  replicate i ' '
+    ++ '"'
+    : k
+    ++ "\""
+    ++ f j
+showIndent f i (QueryTwig k t) =
+  replicate i ' '
+    ++ '"'
+    : k
+    ++ "\" {\n"
+    ++ showIndent f (i + 4) t
+    ++ "\n"
+    ++ replicate i ' '
+    ++ "}"
+showIndent f i (QueryBranch ts) =
+  intercalate ",\n" $ map (showIndent f i) ts
+showIndent f i (QueryList k m t) =
+  replicate i ' '
+    ++ '"'
+    : k
+    ++ "\""
+    ++ (if null m then "" else " | " ++ showFilter m)
+    ++ " [\n"
+    ++ showIndent f (i + 4) t
+    ++ "\n"
+    ++ replicate i ' '
+    ++ "]"
+  where
+    showFilter :: JSONObj -> String
+    showFilter m =
+      m
+        & M.toList
+        & map (\(k, v) -> '\"' : k ++ "\" == " ++ show v)
+        & intercalate " && "
+
+-- instance Show (QueryTree ()) where
+--   show = showIndent (const "") 0
+
+-- instance Show (QueryTree JSON) where
+--   show = showIndent (show :: JSON -> String) 0
 
 {-
 Three possible types of queries (Write, Read, Delete):

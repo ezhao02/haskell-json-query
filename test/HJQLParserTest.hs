@@ -4,8 +4,85 @@ import Data.Map qualified as M
 import HJQL
 import HJQLParser
 import JSONObject
+import JSONParserTest
 import Parser qualified as P
 import Test.HUnit (Assertion, Counts, Test (..), assert, runTestTT, (~:), (~?=))
+import Test.QuickCheck
+
+instance (Arbitrary a, Eq a) => Arbitrary (QueryTree a) where
+  arbitrary :: Gen (QueryTree a)
+  arbitrary = sized gen
+    where
+      strNoQuoteGen :: Gen String
+      strNoQuoteGen = suchThat arbitrary (notElem '"')
+      gen :: Int -> Gen (QueryTree a)
+      gen n =
+        frequency
+          [ (1, QueryLeaf <$> strNoQuoteGen <*> arbitrary),
+            ( n,
+              oneof
+                [ QueryTwig <$> strNoQuoteGen <*> scale (`div` 2) arbitrary,
+                  QueryBranch <$> suchThat (scale (`div` 2) arbitrary) (not . null),
+                  QueryList
+                    <$> strNoQuoteGen
+                    <*> suchThat
+                      (arbitrary :: Gen JSONObj)
+                      (all (notElem '"') . M.keys)
+                    <*> scale (`div` 2) arbitrary
+                ]
+            )
+          ]
+
+  shrink :: (Arbitrary a) => QueryTree a -> [QueryTree a]
+  shrink q = filter (q /=) (shrinkHelper q)
+    where
+      shrinkHelper (QueryLeaf k a) = [QueryLeaf k' a' | k' <- shrink k, a' <- shrink a]
+      shrinkHelper (QueryTwig k t) = t : [QueryTwig k' t' | k' <- shrink k, t' <- shrink t]
+      shrinkHelper (QueryList k m t) =
+        t : [QueryList k' m' t' | k' <- shrink k, m' <- shrink m, t' <- shrink t]
+      shrinkHelper (QueryBranch ts) = map QueryBranch $ filter (not . null) $ shrink ts
+
+instance Arbitrary Query where
+  arbitrary :: Gen Query
+  arbitrary =
+    oneof
+      [ Read <$> arbitrary,
+        Write <$> arbitrary,
+        Delete <$> arbitrary
+      ]
+
+  shrink :: Query -> [Query]
+  shrink (Read t) = map Read (shrink t)
+  shrink (Write t) = map Write (shrink t)
+  shrink (Delete t) = map Delete (shrink t)
+
+prop_roundtripHJQL :: Query -> Property
+prop_roundtripHJQL q =
+  let p = P.doParse hjqlP (showQuery q)
+   in case p of
+        Just (parsed, "") ->
+          counterexample
+            (show parsed ++ show (reduceQuery parsed) ++ show (reduceQuery q))
+            (reduceQuery parsed == reduceQuery q)
+        _ -> counterexample (show p) False
+  where
+    -- Removes unnecessary QueryBranch
+    reduce :: QueryTree a -> QueryTree a
+    reduce (QueryTwig k t) = QueryTwig k (reduce t)
+    reduce (QueryList k m t) = QueryList k m (reduce t)
+    reduce (QueryBranch l@(t : ts)) =
+      if null ts then reduce t else QueryBranch (reduceNestedBranch indivReduced)
+      where
+        indivReduced = map reduce l
+        reduceNestedBranch :: [QueryTree a] -> [QueryTree a]
+        reduceNestedBranch [] = []
+        reduceNestedBranch (QueryBranch b : ts) = b ++ reduceNestedBranch ts
+        reduceNestedBranch (t : ts) = t : reduceNestedBranch ts
+    reduce t = t
+    reduceQuery :: Query -> Query
+    reduceQuery (Write t) = Write (reduce t)
+    reduceQuery (Read t) = Read (reduce t)
+    reduceQuery (Delete t) = Delete (reduce t)
 
 runHJQLParser :: String -> Either P.ParseError Query
 runHJQLParser = P.parse hjqlP
@@ -320,7 +397,7 @@ test_parseHJQLNoPair =
       ]
 
 -- >>> runTestTT test_parseHJQLWPair
--- Counts {cases = 8, tried = 8, errors = 0, failures = 2}
+-- Counts {cases = 8, tried = 8, errors = 0, failures = 0}
 
 -- >>> runTestTT test_parseHJQLNoPair
 -- Counts {cases = 8, tried = 8, errors = 0, failures = 0}
