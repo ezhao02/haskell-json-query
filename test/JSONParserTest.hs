@@ -10,18 +10,50 @@ import Test.QuickCheck
 
 instance Arbitrary JSON where
   arbitrary :: Gen JSON
-  arbitrary = undefined
+  arbitrary = sized gen
+    where
+      gen :: Int -> Gen JSON
+      gen n =
+        frequency
+          [ ( 1,
+              oneof
+                [ JSONStr <$> suchThat arbitrary (notElem '"'),
+                  JSONBool <$> arbitrary,
+                  JSONNum <$> arbitrary,
+                  return JSONNull
+                ]
+            ),
+            ( n,
+              oneof
+                [ JSONList <$> scale (`div` 2) arbitrary,
+                  JSONObj
+                    <$> suchThat
+                      (scale (`div` 2) arbitrary)
+                      (all (notElem '"') . M.keys) -- keys cannot contain "
+                ]
+            )
+          ]
 
-prop_roundtripJSON :: JSON -> Bool
-prop_roundtripJSON j = P.doParse jsonP (show j) == Just (j, "")
+  shrink :: JSON -> [JSON]
+  shrink JSONNull = []
+  shrink (JSONStr s) = JSONNull : map JSONStr (shrink s)
+  shrink (JSONNum n) = JSONNull : map JSONNum (shrink n)
+  shrink (JSONBool b) = JSONNull : map JSONBool (shrink b)
+  shrink (JSONList l) = JSONNull : map JSONList (shrink l)
+  shrink (JSONObj o) = JSONNull : map JSONObj (shrink o)
+
+prop_roundtripJSON :: JSON -> Property
+prop_roundtripJSON j =
+  let parsed = P.doParse jsonP (show j)
+   in counterexample (show parsed) $ parsed == Just (j, "")
 
 runJSONParser :: String -> Maybe (JSON, String)
 runJSONParser = P.doParse jsonP
 
 testJSONParsePrimitives :: Test
 testJSONParsePrimitives =
-  "JSON parsing"
-    ~: TestList
+  "JSON parsing" ~:
+    TestList
       [ runJSONParser "{}" ~?= Just (JSONObj M.empty, ""),
         runJSONParser "1" ~?= Just (JSONNum 1.0, ""),
         runJSONParser "-0.3" ~?= Just (JSONNum (-0.3), ""),
@@ -37,8 +69,8 @@ testJSONParsePrimitives =
 
 testJSONParseObject :: Test
 testJSONParseObject =
-  "JSON Object parsing"
-    ~: TestList
+  "JSON Object parsing" ~:
+    TestList
       [ runJSONParser
           "    {\
           \\n           \"a\": \"hi\",\
@@ -75,8 +107,8 @@ testJSONParseObject =
 
 testJSONParseList :: Test
 testJSONParseList =
-  "JSON List Parsing"
-    ~: TestList
+  "JSON List Parsing" ~:
+    TestList
       [ runJSONParser "[1, 2, 3]" ~?= Just (JSONList [JSONNum 1.0, JSONNum 2.0, JSONNum 3.0], ""),
         runJSONParser "[1,]" ~?= Just (JSONList [JSONNum 1.0], ""),
         runJSONParser "[[true, false, true], [null, [true, 0]], [[\"x\",\"y\"],[],[\"z\"]],]"
@@ -96,3 +128,8 @@ testJSONParseList =
 
 -- >>> runTestTT testJSONParseList
 -- Counts {cases = 3, tried = 3, errors = 0, failures = 0}
+
+x = JSONObj $ M.fromList [("\"", JSONNull)]
+
+-- >>> show x
+-- "{\n    \"\"\": null\n}"

@@ -170,33 +170,6 @@ test_parseHJQLWPair =
               )
       ]
 
--- "write {\n\
--- \    \"key\" [\n\
--- \        \"field\": null,\n,\
--- \        \"data\" |\
--- \ \"id\"  ==   300    && \"boss\" ==\
--- \{\"id\": 100, \"name\": \"Boris\"} [\n\
--- \            \"name\": \"Edward\",\n\
--- \            \"boss\" {\n\
--- \                \"id\": 552\n\
--- \            }\n\
--- \        ]\n\
--- \    ]\n\
--- \}"
--- >>> runHJQLParser "write {\n\
--- \    \"key\" [\n\
--- \        \"field\": null,\n,\
--- \        \"data\" |\
--- \ \"id\"  ==   300    && \"boss\" ==\
--- \{\"id\": 100, \"name\": \"Boris\"} [\n\
--- \            \"name\": \"Edward\",\n\
--- \            \"boss\" {\n\
--- \                \"id\": 552\n\
--- \            }\n\
--- \        ]\n\
--- \    ]\n\
--- \}"
-
 test_parseHJQLNoPair :: Test
 test_parseHJQLNoPair =
   "parse read/delete instructions" ~:

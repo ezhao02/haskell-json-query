@@ -21,7 +21,7 @@ instance Show JSON where
 
 showJSON :: Int -> JSON -> String
 showJSON x (JSONNum n) = show n
-showJSON x (JSONStr s) = show s
+showJSON x (JSONStr s) = '\"' : s ++ "\""
 showJSON x (JSONObj obj) = showJSONObject x obj
 showJSON x (JSONBool b) = if b then "true" else "false"
 showJSON x JSONNull = "null"
@@ -35,7 +35,7 @@ showJSONObject indent obj =
     ++ "}"
   where
     showPair (key, value) =
-      replicate (indent + 4) ' ' ++ show key ++ ": " ++ showJSON (indent + 4) value ++ ","
+      replicate (indent + 4) ' ' ++ '\"' : key ++ "\": " ++ showJSON (indent + 4) value ++ ","
 
 -- Remove trailing commas from the last pair in the JSON object
 removeTrailingComma :: String -> String

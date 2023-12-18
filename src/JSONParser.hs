@@ -35,11 +35,20 @@ jsonP =
 -- Parser for getting a floating point value for JSONNum
 numP :: Parser Float
 numP =
-  let nonNegFloatParser =
+  let nonNegSignificandParser =
         ( ((++) <$> some P.digit <*> ((:) <$> P.char '.' <*> some P.digit))
             <|> some P.digit
         )
-   in read
+      exponentParser =
+        (:)
+          <$> P.char 'e'
+          <*> ( (:) <$> P.char '-' <*> some P.digit
+                  <|> some P.digit
+              )
+      nonNegFloatParser =
+        (++) <$> nonNegSignificandParser <*> exponentParser
+          <|> nonNegSignificandParser
+   in (read :: String -> Float)
         <$> (((:) <$> P.char '-' <*> nonNegFloatParser) <|> nonNegFloatParser)
 
 -- Parser for getting a string value for JSONStr
@@ -56,7 +65,7 @@ nullP = P.string "null"
 
 -- | Parser for getting a mapping from String to JSON
 objP :: Parser JSONObj
-objP = Map.fromList <$> P.braces (P.sepByHanging kvPairP $ P.char ',')
+objP = Map.fromList <$> P.braces (P.wsP $ P.sepByHanging kvPairP $ P.char ',')
 
 -- | Parser for getting a key value pair
 kvPairP :: Parser (String, JSON)
@@ -64,4 +73,4 @@ kvPairP = (,) <$> P.wsP strP <* P.char ':' <*> jsonP
 
 -- | Parser for getting a list of JSON
 listP :: Parser [JSON]
-listP = P.brackets $ P.sepByHanging jsonP $ P.char ','
+listP = P.brackets $ P.wsP $ P.sepByHanging jsonP $ P.char ','

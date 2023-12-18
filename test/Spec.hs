@@ -2,11 +2,12 @@ import HJQLParserTest
 import HJQLTest
 import JSONParserTest
 import Test.HUnit
-import Test.QuickCheck
+import Test.QuickCheck (quickCheck)
 
 main :: IO ()
 main = do
   putStrLn "Testing JSON Parsing"
+  quickCheck prop_roundtripJSON
   runTestTT testJSONParsePrimitives
   runTestTT testJSONParseObject
   runTestTT testJSONParseList
