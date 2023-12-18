@@ -1,0 +1,10 @@
+delete {
+    "nfc" {
+        "Dallas Cowboys"
+    },
+    "afc" {
+        "Baltimore Ravens" {
+            "losses"
+        }
+    }
+}

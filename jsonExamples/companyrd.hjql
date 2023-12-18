@@ -1,0 +1,30 @@
+read {
+    "name",
+    "sections" [
+        "section_name",
+        "section_head" {
+            "name",
+            "position",
+            "email"
+        },
+        "teams" [
+            "team_name",
+            "team_leader" {
+                "name",
+                "position",
+                "email"
+            },
+            "employees" [
+                "name",
+                "position",
+                "email"
+            ]
+        ]
+    ],
+    "all_employees" | "employee_id" == 1004 [
+        "employee_id",
+        "name",
+        "position",
+        "email"
+    ]
+}

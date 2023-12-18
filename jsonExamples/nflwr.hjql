@@ -1,5 +1,8 @@
 write {
     "afc" {
+        "Kansas City Chiefs" {
+            "wins": 10
+        },
         "Buffalo Bills": {
             "wins": 8,
             "losses": 6,

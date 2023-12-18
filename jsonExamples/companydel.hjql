@@ -1,0 +1,11 @@
+delete {
+    "name",
+    "address",
+    "founded_year",
+    "sections",
+    "all_employees"
+}
+
+write {
+    "name": "new company D"
+}
