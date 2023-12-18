@@ -122,7 +122,7 @@ runQuery (Read queryTree) doc =
                 jsonList = map JSONObj rightList
                 filteredList = filterList jsonList (M.toList conditions)
              in case filteredList of
-                  [] -> Left $ "No items found in list on key " ++ key
+                  [] -> Right M.empty
                   _ -> Right $ M.singleton key (JSONList filteredList)
           _ -> Left $ "List used on non-list on key " ++ key
 
@@ -141,6 +141,203 @@ filterList list conditions =
         _ -> False
     )
     list
+
+-- jsonObj2 :: JSONObj
+-- jsonObj2 =
+--   M.fromList
+--     [ ( "students",
+--         JSONList
+--           [ JSONStr "random string",
+--             JSONNum 3.14,
+--             JSONBool False,
+--             JSONNull,
+--             JSONList [JSONStr "hello", JSONBool True, JSONNum 5],
+--             JSONObj $ M.fromList [("name", JSONStr "Jack"), ("major", JSONStr "CS"), ("gpa", JSONNum 3.5), ("classes", JSONObj $ M.fromList [("cis110", JSONNum 91), ("cis120", JSONNum 97), ("math201", JSONNum 93), ("math202", JSONNum 95)])],
+--             JSONObj $ M.fromList [("name", JSONStr "Emma"), ("major", JSONStr "Math"), ("gpa", JSONNum 3.8), ("classes", JSONObj $ M.fromList [("cis110", JSONNum 95), ("math201", JSONNum 89), ("math202", JSONNum 92)])],
+--             JSONObj $ M.fromList [("name", JSONStr "Charlie"), ("major", JSONStr "Physics"), ("gpa", JSONNum 3.6), ("classes", JSONObj $ M.fromList [("phy101", JSONNum 92), ("phy202", JSONNum 87), ("cis120", JSONNum 95)])],
+--             JSONObj $ M.fromList [("name", JSONStr "Olivia"), ("major", JSONStr "CS"), ("gpa", JSONNum 3.9), ("classes", JSONObj $ M.fromList [("cis110", JSONNum 100), ("cis120", JSONNum 100), ("cis121", JSONNum 100), ("cis160", JSONNum 100)])],
+--             JSONObj $ M.fromList [("name", JSONStr "Noah"), ("major", JSONStr "Math"), ("gpa", JSONNum 3.7), ("classes", JSONObj $ M.fromList [("math201", JSONNum 95), ("math202", JSONNum 93), ("math203", JSONNum 91)])]
+--           ]
+--       ),
+--       ("obj", JSONObj $ M.fromList [("key1", JSONStr "value1"), ("key2", JSONStr "value2"), ("key3", JSONStr "value3")]),
+--       ( "outer",
+--         JSONList
+--           [ JSONObj $ M.fromList [("middle", JSONList [JSONObj $ M.fromList [("inner", JSONList [JSONObj $ M.fromList [("name", JSONStr "Lambert"), ("occupation", JSONStr "Sheep")]])]])],
+--             JSONObj $ M.fromList [("middle", JSONList [JSONObj $ M.fromList [("inner", JSONList [JSONObj $ M.fromList [("name", JSONStr "James"), ("occupation", JSONStr "Cow")]])]])]
+--           ]
+--       )
+--     ]
+
+-- -- Read tests for jsonObj2
+-- queryRead11 :: Query
+-- queryRead11 = Read (QueryLeaf "students" ())
+
+-- queryRead12 :: Query
+-- queryRead12 = Read (QueryList "students" M.empty (QueryLeaf "name" ()))
+
+-- queryRead13 :: Query
+-- queryRead13 = Read (QueryList "students" (M.fromList [("name", JSONStr "Jack")]) (QueryLeaf "name" ()))
+
+-- queryRead14 :: Query
+-- queryRead14 = Read (QueryList "students" M.empty (QueryTwig "classes" (QueryLeaf "cis110" ())))
+
+-- queryRead15 :: Query
+-- queryRead15 = Read (QueryList "students" (M.fromList [("classes", JSONObj (M.fromList [("cis110", JSONNum 100)]))]) (QueryTwig "classes" (QueryLeaf "cis110" ())))
+
+-- queryRead16 :: Query
+-- queryRead16 = Read (QueryList "students" M.empty (QueryBranch [QueryLeaf "name" (), QueryLeaf "major" (), QueryLeaf "classes" ()]))
+
+-- queryRead17 :: Query
+-- queryRead17 = Read (QueryList "students" M.empty (QueryBranch [QueryLeaf "name" (), QueryTwig "classes" (QueryBranch [QueryLeaf "cis110" (), QueryLeaf "cis120" ()])]))
+
+-- queryRead18 :: Query
+-- queryRead18 = Read (QueryList "students" (M.fromList [("classes", JSONObj $ M.fromList [("cis110", JSONNum 100)])]) (QueryBranch [QueryLeaf "name" (), QueryLeaf "major" (), QueryLeaf "gpa" (), QueryTwig "classes" (QueryLeaf "cis110" ())]))
+
+-- queryRead19 :: Query
+-- queryRead19 = Read (QueryBranch [QueryLeaf "obj" (), QueryList "students" (M.fromList [("classes", JSONObj $ M.fromList [("cis110", JSONNum 100)])]) (QueryBranch [QueryLeaf "name" (), QueryLeaf "major" (), QueryLeaf "gpa" (), QueryTwig "classes" (QueryLeaf "cis110" ())])])
+
+-- queryRead20 :: Query
+-- queryRead20 = Read (QueryList "students" M.empty (QueryBranch []))
+
+-- queryRead21 :: Query
+-- queryRead21 =
+--   Read
+--     ( QueryList
+--         "outer"
+--         (M.fromList [("middle", JSONList [JSONObj $ M.fromList [("inner", JSONList [JSONObj $ M.fromList [("name", JSONStr "Lambert"), ("occupation", JSONStr "Sheep")]])]])])
+--         ( QueryList
+--             "middle"
+--             M.empty
+--             (QueryList "inner" M.empty (QueryBranch [QueryLeaf "name" (), QueryLeaf "occupation" ()]))
+--         )
+--     )
+
+-- test :: Test
+-- test =
+--   TestList
+--     [ runQuery queryRead11 jsonObj2
+--         ~?= Right
+--           ( M.fromList
+--               [ ( "students",
+--                   JSONList
+--                     [ JSONStr "random string",
+--                       JSONNum 3.14,
+--                       JSONBool False,
+--                       JSONNull,
+--                       JSONList [JSONStr "hello", JSONBool True, JSONNum 5],
+--                       JSONObj $ M.fromList [("name", JSONStr "Jack"), ("major", JSONStr "CS"), ("gpa", JSONNum 3.5), ("classes", JSONObj $ M.fromList [("cis110", JSONNum 91), ("cis120", JSONNum 97), ("math201", JSONNum 93), ("math202", JSONNum 95)])],
+--                       JSONObj $ M.fromList [("name", JSONStr "Emma"), ("major", JSONStr "Math"), ("gpa", JSONNum 3.8), ("classes", JSONObj $ M.fromList [("cis110", JSONNum 95), ("math201", JSONNum 89), ("math202", JSONNum 92)])],
+--                       JSONObj $ M.fromList [("name", JSONStr "Charlie"), ("major", JSONStr "Physics"), ("gpa", JSONNum 3.6), ("classes", JSONObj $ M.fromList [("phy101", JSONNum 92), ("phy202", JSONNum 87), ("cis120", JSONNum 95)])],
+--                       JSONObj $ M.fromList [("name", JSONStr "Olivia"), ("major", JSONStr "CS"), ("gpa", JSONNum 3.9), ("classes", JSONObj $ M.fromList [("cis110", JSONNum 100), ("cis120", JSONNum 100), ("cis121", JSONNum 100), ("cis160", JSONNum 100)])],
+--                       JSONObj $ M.fromList [("name", JSONStr "Noah"), ("major", JSONStr "Math"), ("gpa", JSONNum 3.7), ("classes", JSONObj $ M.fromList [("math201", JSONNum 95), ("math202", JSONNum 93), ("math203", JSONNum 91)])]
+--                     ]
+--                 )
+--               ]
+--           ),
+--       runQuery queryRead12 jsonObj2
+--         ~?= Right
+--           ( M.fromList
+--               [ ( "students",
+--                   JSONList
+--                     [ JSONObj $ M.fromList [("name", JSONStr "Jack")],
+--                       JSONObj $ M.fromList [("name", JSONStr "Emma")],
+--                       JSONObj $ M.fromList [("name", JSONStr "Charlie")],
+--                       JSONObj $ M.fromList [("name", JSONStr "Olivia")],
+--                       JSONObj $ M.fromList [("name", JSONStr "Noah")]
+--                     ]
+--                 )
+--               ]
+--           ),
+--       runQuery queryRead13 jsonObj2
+--         ~?= Right
+--           ( M.fromList
+--               [ ( "students",
+--                   JSONList [JSONObj $ M.fromList [("name", JSONStr "Jack")]]
+--                 )
+--               ]
+--           ),
+--       runQuery queryRead14 jsonObj2
+--         ~?= Right
+--           ( M.fromList
+--               [ ( "students",
+--                   JSONList
+--                     [ JSONObj $ M.fromList [("classes", JSONObj $ M.fromList [("cis110", JSONNum 91)])],
+--                       JSONObj $ M.fromList [("classes", JSONObj $ M.fromList [("cis110", JSONNum 95)])],
+--                       JSONObj $ M.fromList [("classes", JSONObj $ M.fromList [("cis110", JSONNum 100)])]
+--                     ]
+--                 )
+--               ]
+--           ),
+--       runQuery queryRead15 jsonObj2
+--         ~?= Right
+--           ( M.fromList
+--               [ ( "students",
+--                   JSONList [JSONObj $ M.fromList [("classes", JSONObj $ M.fromList [("cis110", JSONNum 100)])]]
+--                 )
+--               ]
+--           ),
+--       runQuery queryRead16 jsonObj2
+--         ~?= Right
+--           ( M.fromList
+--               [ ( "students",
+--                   JSONList
+--                     [ JSONObj $ M.fromList [("name", JSONStr "Jack"), ("major", JSONStr "CS"), ("classes", JSONObj $ M.fromList [("cis110", JSONNum 91), ("cis120", JSONNum 97), ("math201", JSONNum 93), ("math202", JSONNum 95)])],
+--                       JSONObj $ M.fromList [("name", JSONStr "Emma"), ("major", JSONStr "Math"), ("classes", JSONObj $ M.fromList [("cis110", JSONNum 95), ("math201", JSONNum 89), ("math202", JSONNum 92)])],
+--                       JSONObj $ M.fromList [("name", JSONStr "Charlie"), ("major", JSONStr "Physics"), ("classes", JSONObj $ M.fromList [("phy101", JSONNum 92), ("phy202", JSONNum 87), ("cis120", JSONNum 95)])],
+--                       JSONObj $ M.fromList [("name", JSONStr "Olivia"), ("major", JSONStr "CS"), ("classes", JSONObj $ M.fromList [("cis110", JSONNum 100), ("cis120", JSONNum 100), ("cis121", JSONNum 100), ("cis160", JSONNum 100)])],
+--                       JSONObj $ M.fromList [("name", JSONStr "Noah"), ("major", JSONStr "Math"), ("classes", JSONObj $ M.fromList [("math201", JSONNum 95), ("math202", JSONNum 93), ("math203", JSONNum 91)])]
+--                     ]
+--                 )
+--               ]
+--           ),
+--       runQuery queryRead17 jsonObj2
+--         ~?= Right
+--           ( M.fromList
+--               [ ( "students",
+--                   JSONList
+--                     [ JSONObj $ M.fromList [("name", JSONStr "Jack"), ("classes", JSONObj $ M.fromList [("cis110", JSONNum 91), ("cis120", JSONNum 97)])],
+--                       JSONObj $ M.fromList [("name", JSONStr "Olivia"), ("classes", JSONObj $ M.fromList [("cis110", JSONNum 100), ("cis120", JSONNum 100)])]
+--                     ]
+--                 )
+--               ]
+--           ),
+--       runQuery queryRead18 jsonObj2
+--         ~?= Right
+--           ( M.fromList
+--               [ ( "students",
+--                   JSONList
+--                     [JSONObj $ M.fromList [("name", JSONStr "Olivia"), ("major", JSONStr "CS"), ("gpa", JSONNum 3.9), ("classes", JSONObj $ M.fromList [("cis110", JSONNum 100)])]]
+--                 )
+--               ]
+--           ),
+--       runQuery queryRead19 jsonObj2
+--         ~?= Right
+--           ( M.fromList
+--               [ ("obj", JSONObj $ M.fromList [("key1", JSONStr "value1"), ("key2", JSONStr "value2"), ("key3", JSONStr "value3")]),
+--                 ( "students",
+--                   JSONList
+--                     [JSONObj $ M.fromList [("name", JSONStr "Olivia"), ("major", JSONStr "CS"), ("gpa", JSONNum 3.9), ("classes", JSONObj $ M.fromList [("cis110", JSONNum 100)])]]
+--                 )
+--               ]
+--           ),
+--       runQuery queryRead20 jsonObj2
+--         ~?= Right
+--           ( M.fromList
+--               [ ( "students",
+--                   JSONList [JSONObj M.empty, JSONObj M.empty, JSONObj M.empty, JSONObj M.empty, JSONObj M.empty]
+--                 )
+--               ]
+--           ),
+--       runQuery queryRead21 jsonObj2
+--         ~?= Right
+--           ( M.fromList
+--               [ ( "outer",
+--                   JSONList
+--                     [JSONObj $ M.fromList [("middle", JSONList [JSONObj $ M.fromList [("inner", JSONList [JSONObj $ M.fromList [("name", JSONStr "Lambert"), ("occupation", JSONStr "Sheep")]])]])]]
+--                 )
+--               ]
+--           )
+--     ]
 
 -- Example usage:
 exampleJSONObj :: JSONObj
